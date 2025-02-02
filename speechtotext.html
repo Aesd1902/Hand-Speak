@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech-To-Text</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    <div class="container">
+        <div class="card">
+            <h1>Speech-To-Text</h1>
+            <div class="wave-icon"></div>
+            <button id="startBtn" class="btn">🎤 Start</button>
+            <button id="stopBtn" class="btn" disabled>⏹ Stop</button>
+            <textarea id="outputText" placeholder="Your speech will appear here..." readonly></textarea>
+        </div>
+    </div>
+    <script>
+        let recognition;
+        document.getElementById("startBtn").addEventListener("click", () => {
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = "en-US";
+            
+            recognition.onstart = () => {
+                document.getElementById("startBtn").disabled = true;
+                document.getElementById("stopBtn").disabled = false;
+            };
+            
+            recognition.onresult = (event) => {
+                document.getElementById("outputText").value = event.results[0][0].transcript;
+            };
+            
+            recognition.onend = () => {
+                document.getElementById("startBtn").disabled = false;
+                document.getElementById("stopBtn").disabled = true;
+            };
+            
+            recognition.start();
+        });
+        
+        document.getElementById("stopBtn").addEventListener("click", () => {
+            recognition.stop();
+        });
+    </script>
+    <script src="particles.js"></script>
+    <style>
+        .wave-icon {
+            width: 50px;
+            height: 50px;
+            background: url('wave.gif') no-repeat center;
+            background-size: cover;
+            margin: 10px auto;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</body>
+</html>
